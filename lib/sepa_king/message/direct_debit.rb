@@ -45,6 +45,9 @@ module SEPA
           builder.ReqdColltnDt(group[:requested_date].iso8601)
           builder.Cdtr do
             builder.Nm(group[:account].name)
+            builder.PstlAdr do
+              build_postal_address(builder, group[:account].postal_address)
+            end if group[:account].postal_address.present?
           end
           builder.CdtrAcct do
             builder.Id do
@@ -113,7 +116,7 @@ module SEPA
           end
           builder.EndToEndId(transaction.reference)
         end
-        builder.InstdAmt('%.2f' % transaction.amount, Ccy: 'EUR')
+        builder.InstdAmt('%.2f' % transaction.amount, Ccy: transaction.currency)
         builder.DrctDbtTx do
           builder.MndtRltdInf do
             builder.MndtId(transaction.mandate_id)
@@ -134,6 +137,9 @@ module SEPA
         end
         builder.Dbtr do
           builder.Nm(transaction.name)
+          builder.PstlAdr do
+            build_postal_address(builder, transaction.postal_address)
+          end if transaction.postal_address.present?
         end
         builder.DbtrAcct do
           builder.Id do
@@ -146,6 +152,15 @@ module SEPA
           end
         end
       end
+    end
+
+    def build_postal_address(builder, postal_address)
+      builder.Ctry(postal_address.country) if postal_address.country.present?
+      builder.StrtNm(postal_address.street_name) if postal_address.street_name.present?
+      builder.PstCd(postal_address.postal_code) if postal_address.postal_code.present?
+      builder.TwnNm(postal_address.town_name) if postal_address.town_name.present?
+      builder.AdrLine(postal_address.address_line_1) if postal_address.address_line_1.present?
+      builder.AdrLine(postal_address.address_line_2) if postal_address.address_line_2.present?
     end
   end
 end

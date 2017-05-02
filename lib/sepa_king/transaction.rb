@@ -6,8 +6,8 @@ module SEPA
 
     DEFAULT_REQUESTED_DATE = Date.new(1999, 1, 1).freeze
 
-    attr_accessor :name, :iban, :bic, :amount, :instruction, :reference, :remittance_information, :requested_date, :batch_booking
-    convert :name, :instruction, :reference, :remittance_information, to: :text
+    attr_accessor :name, :iban, :bic, :amount, :instruction, :reference, :remittance_information, :requested_date, :batch_booking, :currency, :postal_address
+    convert :name, :instruction, :reference, :remittance_information, :currency, to: :text
     convert :amount, to: :decimal
 
     validates_length_of :name, within: 1..70
