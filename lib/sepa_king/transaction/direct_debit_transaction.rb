@@ -2,7 +2,7 @@
 module SEPA
   class DirectDebitTransaction < Transaction
     SEQUENCE_TYPES = %w(FRST OOFF RCUR FNAL)
-    LOCAL_INSTRUMENTS = %w(CORE COR1 B2B)
+    LOCAL_INSTRUMENTS = %w(CORE COR1 B2B DDCOR1 DDB2B)
 
     attr_accessor :mandate_id, :mandate_date_of_signature, :local_instrument, :sequence_type, :creditor_account, :original_debtor_account, :same_mandate_new_debtor_agent
 
@@ -35,7 +35,7 @@ module SEPA
       case schema_name
       when PAIN_008_002_02
         self.bic.present? && %w(CORE B2B).include?(self.local_instrument)
-      when PAIN_008_003_02, PAIN_008_001_02
+      when PAIN_008_003_02, PAIN_008_001_02, PAIN_008_001_02_CH_03
         true
       end
     end

@@ -1,12 +1,13 @@
 # encoding: utf-8
 
 module SEPA
-  PAIN_008_001_02 = 'pain.008.001.02'
-  PAIN_008_002_02 = 'pain.008.002.02'
-  PAIN_008_003_02 = 'pain.008.003.02'
-  PAIN_001_001_03 = 'pain.001.001.03'
-  PAIN_001_002_03 = 'pain.001.002.03'
-  PAIN_001_003_03 = 'pain.001.003.03'
+  PAIN_008_001_02       = 'pain.008.001.02'
+  PAIN_008_001_02_CH_03 = 'pain.008.001.02.ch.03'
+  PAIN_008_002_02       = 'pain.008.002.02'
+  PAIN_008_003_02       = 'pain.008.003.02'
+  PAIN_001_001_03       = 'pain.001.001.03'
+  PAIN_001_002_03       = 'pain.001.002.03'
+  PAIN_001_003_03       = 'pain.001.003.03'
 
   class Message
     include ActiveModel::Validations
@@ -46,7 +47,7 @@ module SEPA
       builder.Document(xml_schema(schema_name)) do
         builder.__send__(xml_main_tag) do
           build_group_header(builder)
-          build_payment_informations(builder)
+          build_payment_informations(builder, schema_name)
         end
       end
     end
@@ -61,7 +62,7 @@ module SEPA
       case schema_name
         when PAIN_001_002_03, PAIN_008_002_02, PAIN_001_001_03
           account.bic.present? && transactions.all? { |t| t.schema_compatible?(schema_name) }
-        when PAIN_001_003_03, PAIN_008_003_02, PAIN_008_001_02
+        when PAIN_001_003_03, PAIN_008_003_02, PAIN_008_001_02, PAIN_008_001_02_CH_03
           transactions.all? { |t| t.schema_compatible?(schema_name) }
       end
     end
@@ -98,9 +99,15 @@ module SEPA
   private
     # @return {Hash<Symbol=>String>} xml schema information used in output xml
     def xml_schema(schema_name)
-      { :xmlns                => "urn:iso:std:iso:20022:tech:xsd:#{schema_name}",
-        :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
-        :'xsi:schemaLocation' => "urn:iso:std:iso:20022:tech:xsd:#{schema_name} #{schema_name}.xsd" }
+      if schema_name == PAIN_008_001_02_CH_03
+        { :xmlns                => "http://www.six-interbank-clearing.com/de/pain.008.001.02.ch.03.xsd",
+          :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
+          :'xsi:schemaLocation' => "http://www.six-interbank-clearing.com/de/pain.008.001.02.ch.03.xsd pain.008.001.02.ch.03.xsd" }
+      else
+        { :xmlns                => "urn:iso:std:iso:20022:tech:xsd:#{schema_name}",
+          :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
+          :'xsi:schemaLocation' => "urn:iso:std:iso:20022:tech:xsd:#{schema_name} #{schema_name}.xsd" }
+      end
     end
 
     def build_group_header(builder)
@@ -118,6 +125,10 @@ module SEPA
               end
             end
           end if account.respond_to? :creditor_identifier
+          builder.CtctDtls do
+            builder.Nm('SEPA-KING')
+            builder.Othr(SEPA::VERSION)
+          end
         end
       end
     end
