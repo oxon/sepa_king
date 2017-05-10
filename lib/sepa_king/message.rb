@@ -125,10 +125,6 @@ module SEPA
               end
             end
           end if account.respond_to? :creditor_identifier
-          builder.CtctDtls do
-            builder.Nm('SEPA-KING')
-            builder.Othr(SEPA::VERSION)
-          end
         end
       end
     end

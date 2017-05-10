@@ -44,7 +44,7 @@ module SEPA
 
     def valid?(creditor_identifier)
       # In Switzerland, the identifier has to be exactly 17 chars long
-      if creditor_identifier[0..1].match(/41/i)
+      if creditor_identifier.present? && creditor_identifier[0..1].match(/41/i)
         ok = creditor_identifier.length == 17
       elsif ok = creditor_identifier.to_s.match(REGEX)
         # In Germany, the identifier has to be exactly 18 chars long

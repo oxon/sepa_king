@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="http://www.six-interbank-clearing.com/de/pain.008.001.02.ch.03.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.six-interbank-clearing.com/de/pain.008.001.02.ch.03.xsd pain.008.001.02.ch.03.xsd">
+  <CstmrDrctDbtInitn>
+    <GrpHdr>
+      <MsgId>Garaio-REM-CHDD</MsgId>
+      <CreDtTm>2017-05-03T08:05:57+02:00</CreDtTm>
+      <NbOfTxs>2</NbOfTxs>
+      <CtrlSum>1766.49</CtrlSum>
+      <InitgPty>
+        <Nm>Garaio AG Bern</Nm>
+        <Id>
+          <OrgId>
+            <Othr>
+              <Id>41100000000872849</Id>
+            </Othr>
+          </OrgId>
+        </Id>
+        <CtctDtls>
+          <Nm>SEPA-KING</Nm>
+          <Othr>0.9.1</Othr>
+        </CtctDtls>
+      </InitgPty>
+    </GrpHdr>
+    <PmtInf>
+      <PmtInfId>Garaio-REM-CHDD/1</PmtInfId>
+      <PmtMtd>DD</PmtMtd>
+      <PmtTpInf>
+        <SvcLvl>
+          <Prtry>CHDD</Prtry>
+        </SvcLvl>
+        <LclInstrm>
+          <Prtry>DDCOR1</Prtry>
+        </LclInstrm>
+      </PmtTpInf>
+      <ReqdColltnDt>2017-05-05</ReqdColltnDt>
+      <Cdtr>
+        <Nm>Garaio AG Bern</Nm>
+      </Cdtr>
+      <CdtrAcct>
+        <Id>
+          <IBAN>CH3700206206P46310130</IBAN>
+        </Id>
+      </CdtrAcct>
+      <CdtrAgt>
+        <FinInstnId>
+          <ClrSysMmbId>
+            <MmbId>09000</MmbId>
+          </ClrSysMmbId>
+        </FinInstnId>
+      </CdtrAgt>
+      <CdtrSchmeId>
+        <Id>
+          <PrvtId>
+            <Othr>
+              <Id>41100000000872849</Id>
+              <SchmeNm>
+                <Prtry>CHDD</Prtry>
+              </SchmeNm>
+            </Othr>
+          </PrvtId>
+        </Id>
+      </CdtrSchmeId>
+      <DrctDbtTxInf>
+        <PmtId>
+          <InstrId>InstrID-1</InstrId>
+          <EndToEndId>E2E-ID-1</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="CHF">39.99</InstdAmt>
+        <DbtrAgt>
+          <FinInstnId>
+            <ClrSysMmbId>
+              <MmbId>09000</MmbId>
+            </ClrSysMmbId>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Zahlemann &amp; Söhne GbR</Nm>
+          <PstlAdr>
+            <StrtNm>Gartenstrasse 3</StrtNm>
+            <PstCd>3000</PstCd>
+            <TwnNm>Bern</TwnNm>
+          </PstlAdr>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>NL32INGB0663924480</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>DD Einzug Nettomiete</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <InstrId>InstrID-2</InstrId>
+          <EndToEndId>E2E-ID-2</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="CHF">1726.50</InstdAmt>
+        <DbtrAgt>
+          <FinInstnId>
+            <ClrSysMmbId>
+              <MmbId>09000</MmbId>
+            </ClrSysMmbId>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Peter Zürcher</Nm>
+          <PstlAdr>
+            <StrtNm>Mattenbachstrasse 45</StrtNm>
+            <PstCd>8400</PstCd>
+            <TwnNm>Winterthur</TwnNm>
+          </PstlAdr>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>CH7509000000871035613</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>DD Einzug Nettomiete</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+    </PmtInf>
+  </CstmrDrctDbtInitn>
+</Document>
