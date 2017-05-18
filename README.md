@@ -1,10 +1,18 @@
-# Ruby gem for creating SEPA XML files
+# Ruby gem for creating SEPA XML files (with CH-DD extension)
 
-[![Build Status](https://travis-ci.org/salesking/sepa_king.svg)](http://travis-ci.org/salesking/sepa_king)
-[![Code Climate](https://codeclimate.com/github/salesking/sepa_king/badges/gpa.svg)](https://codeclimate.com/github/salesking/sepa_king)
-[![Coverage Status](https://coveralls.io/repos/salesking/sepa_king/badge.svg?branch=master)](https://coveralls.io/r/salesking/sepa_king?branch=master)
-[![Gem Version](https://badge.fury.io/rb/sepa_king.svg)](http://badge.fury.io/rb/sepa_king)
-[![Dependency Status](https://gemnasium.com/salesking/sepa_king.svg)](https://gemnasium.com/salesking/sepa_king)
+## Fork by Garaio
+
+### Why this Fork?
+ Beginning with 2018 the Swiss Postfinance Organization will switch from their DTA Format to the ISO20022 Standard.
+ 
+ Sadly they have changed the ISO20022 Standard to have a Swiss specific core which diverges from the SEPA Standard.
+ 
+ This Fork is to give SepaKing the ability to generate PaymentInitiation File (pain.008.001.02.ch.03) according to the Swiss CH-DD Norm.
+ 
+### Upstream
+ The goal is to have this changes pushed upstream once we feel that they are mature enough to be pushed into SepaKing.
+
+## Introduction
 
 We love building payment applications! So after developing the [DTAUS library for Ruby](https://github.com/salesking/king_dtaus) we move on with SEPA.
 
