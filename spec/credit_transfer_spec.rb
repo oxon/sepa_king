@@ -68,6 +68,12 @@ describe SEPA::CreditTransfer do
           }.to raise_error(RuntimeError)
         end
 
+        it 'should fail for pain.001.001.03.ch.02' do
+          expect {
+            subject.to_xml(SEPA::PAIN_001_001_03_CH_02)
+          }.to raise_error(RuntimeError)
+        end
+
         it 'should fail for pain.001.002.03' do
           expect {
             subject.to_xml(SEPA::PAIN_001_002_03)
