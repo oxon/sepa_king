@@ -100,10 +100,10 @@ module SEPA
   private
     # @return {Hash<Symbol=>String>} xml schema information used in output xml
     def xml_schema(schema_name)
-      if schema_name == PAIN_008_001_02_CH_03
-        { :xmlns                => "http://www.six-interbank-clearing.com/de/pain.008.001.02.ch.03.xsd",
+      if schema_name.in?([PAIN_001_001_03_CH_02, PAIN_008_001_02_CH_03])
+        { :xmlns                => "http://www.six-interbank-clearing.com/de/#{schema_name}.xsd",
           :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
-          :'xsi:schemaLocation' => "http://www.six-interbank-clearing.com/de/pain.008.001.02.ch.03.xsd pain.008.001.02.ch.03.xsd" }
+          :'xsi:schemaLocation' => "http://www.six-interbank-clearing.com/de/#{schema_name}.xsd #{schema_name}.xsd" }
       else
         { :xmlns                => "urn:iso:std:iso:20022:tech:xsd:#{schema_name}",
           :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',

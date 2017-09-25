@@ -24,11 +24,13 @@ module SEPA
           builder.PmtInfId(payment_information_identification(group))
           builder.PmtMtd('TRF')
           builder.BtchBookg(group[:batch_booking])
-          builder.NbOfTxs(transactions.length)
-          builder.CtrlSum('%.2f' % amount_total(transactions))
-          builder.PmtTpInf do
-            builder.SvcLvl do
-              builder.Cd(group[:service_level])
+          unless schema_name == SEPA::PAIN_001_001_03_CH_02
+            builder.NbOfTxs(transactions.length)
+            builder.CtrlSum('%.2f' % amount_total(transactions))
+            builder.PmtTpInf do
+              builder.SvcLvl do
+                builder.Cd(group[:service_level])
+              end
             end
           end
           builder.ReqdExctnDt(group[:requested_date].iso8601)
