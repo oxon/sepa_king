@@ -6,7 +6,7 @@ module SEPA
   PAIN_008_002_02       = 'pain.008.002.02'
   PAIN_008_003_02       = 'pain.008.003.02'
   PAIN_001_001_03       = 'pain.001.001.03'
-  PAIN_001_001_03_CH_02 = 'pain.001.001.03.ch.02'
+  PAIN_001_001_03_CH_02 = 'pain.001.001.03.ch.02' # only PostFinance and type 3 (IBAN, optional creditor agent)
   PAIN_001_002_03       = 'pain.001.002.03'
   PAIN_001_003_03       = 'pain.001.003.03'
 
@@ -100,10 +100,10 @@ module SEPA
   private
     # @return {Hash<Symbol=>String>} xml schema information used in output xml
     def xml_schema(schema_name)
-      if schema_name == PAIN_008_001_02_CH_03
-        { :xmlns                => "http://www.six-interbank-clearing.com/de/pain.008.001.02.ch.03.xsd",
+      if schema_name.in?([PAIN_001_001_03_CH_02, PAIN_008_001_02_CH_03])
+        { :xmlns                => "http://www.six-interbank-clearing.com/de/#{schema_name}.xsd",
           :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
-          :'xsi:schemaLocation' => "http://www.six-interbank-clearing.com/de/pain.008.001.02.ch.03.xsd pain.008.001.02.ch.03.xsd" }
+          :'xsi:schemaLocation' => "http://www.six-interbank-clearing.com/de/#{schema_name}.xsd #{schema_name}.xsd" }
       else
         { :xmlns                => "urn:iso:std:iso:20022:tech:xsd:#{schema_name}",
           :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',

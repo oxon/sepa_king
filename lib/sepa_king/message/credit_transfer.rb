@@ -24,11 +24,13 @@ module SEPA
           builder.PmtInfId(payment_information_identification(group))
           builder.PmtMtd('TRF')
           builder.BtchBookg(group[:batch_booking])
-          builder.NbOfTxs(transactions.length)
-          builder.CtrlSum('%.2f' % amount_total(transactions))
-          builder.PmtTpInf do
-            builder.SvcLvl do
-              builder.Cd(group[:service_level])
+          unless schema_name == SEPA::PAIN_001_001_03_CH_02
+            builder.NbOfTxs(transactions.length)
+            builder.CtrlSum('%.2f' % amount_total(transactions))
+            builder.PmtTpInf do
+              builder.SvcLvl do
+                builder.Cd(group[:service_level])
+              end
             end
           end
           builder.ReqdExctnDt(group[:requested_date].iso8601)
@@ -42,16 +44,25 @@ module SEPA
           end
           builder.DbtrAgt do
             builder.FinInstnId do
-              if account.bic
-                builder.BIC(account.bic)
+              if schema_name == SEPA::PAIN_001_001_03_CH_02
+                builder.ClrSysMmbId do
+                  builder.ClrSysId do
+                    builder.Cd('CHBCC')
+                  end
+                  builder.MmbId('9000')
+                end
               else
-                builder.Othr do
-                  builder.Id('NOTPROVIDED')
+                if account.bic
+                  builder.BIC(account.bic)
+                else
+                  builder.Othr do
+                    builder.Id('NOTPROVIDED')
+                  end
                 end
               end
             end
           end
-          builder.ChrgBr('SLEV')
+          builder.ChrgBr('SLEV') unless schema_name == SEPA::PAIN_001_001_03_CH_02
 
           transactions.each do |transaction|
             build_transaction(builder, transaction)
