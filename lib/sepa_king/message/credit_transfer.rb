@@ -45,11 +45,16 @@ module SEPA
           builder.DbtrAgt do
             builder.FinInstnId do
               if schema_name == SEPA::PAIN_001_001_03_CH_02
+                if account.bic.present?
+                  builder.BIC(account.bic)
+                end
                 builder.ClrSysMmbId do
                   builder.ClrSysId do
                     builder.Cd('CHBCC')
                   end
-                  builder.MmbId('9000')
+                  unless account.bic.present?
+                    builder.MmbId(account.clearing_number || '9000')
+                  end
                 end
               else
                 if account.bic

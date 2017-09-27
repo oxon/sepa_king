@@ -61,8 +61,10 @@ module SEPA
       raise ArgumentError.new("Schema #{schema_name} is unknown!") unless self.known_schemas.include?(schema_name)
 
       case schema_name
-        when PAIN_001_002_03, PAIN_008_002_02, PAIN_001_001_03, PAIN_001_001_03_CH_02
-          account.bic.present? && transactions.all? { |t| t.schema_compatible?(schema_name) }
+        when PAIN_001_002_03, PAIN_008_002_02, PAIN_001_001_03
+          account.bic.present? && !account.clearing_number.present? && transactions.all? { |t| t.schema_compatible?(schema_name) }
+        when PAIN_001_001_03_CH_02
+          (account.bic.present? || account.clearing_number.present?) && transactions.all? { |t| t.schema_compatible?(schema_name) }
         when PAIN_001_003_03, PAIN_008_003_02, PAIN_008_001_02, PAIN_008_001_02_CH_03
           transactions.all? { |t| t.schema_compatible?(schema_name) }
       end
@@ -103,7 +105,7 @@ module SEPA
       if schema_name.in?([PAIN_001_001_03_CH_02, PAIN_008_001_02_CH_03])
         { :xmlns                => "http://www.six-interbank-clearing.com/de/#{schema_name}.xsd",
           :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
-          :'xsi:schemaLocation' => "http://www.six-interbank-clearing.com/de/#{schema_name}.xsd #{schema_name}.xsd" }
+          :'xsi:schemaLocation' => "http://www.six-interbank-clearing.com/de/#{schema_name}.xsd  #{schema_name}.xsd" }
       else
         { :xmlns                => "urn:iso:std:iso:20022:tech:xsd:#{schema_name}",
           :'xmlns:xsi'          => 'http://www.w3.org/2001/XMLSchema-instance',
