@@ -13,13 +13,13 @@ module SEPA
       self.service_level ||= 'SEPA' unless schema_name == PAIN_001_001_03_CH_02
       case schema_name
       when PAIN_001_001_03
-        self.service_level == 'SEPA'
+        self.remittance_reference.nil? && self.service_level == 'SEPA'
       when PAIN_001_002_03
-        self.bic.present? && self.service_level == 'SEPA' && self.currency == 'EUR'
+        self.remittance_reference.nil? && self.bic.present? && self.service_level == 'SEPA' && self.currency == 'EUR'
       when PAIN_001_003_03
-        self.currency == 'EUR' && self.service_level.in?(%w(SEPA URGP))
+        self.remittance_reference.nil? && self.currency == 'EUR' && self.service_level.in?(%w(SEPA URGP))
       when PAIN_001_001_03_CH_02
-        self.service_level.nil? && self.currency.in?(%w(EUR CHF))
+        (self.remittance_information.nil? || self.remittance_reference.nil?) && self.service_level.nil? && self.currency.in?(%w(EUR CHF))
       end
     end
   end

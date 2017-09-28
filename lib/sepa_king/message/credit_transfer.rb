@@ -70,13 +70,13 @@ module SEPA
           builder.ChrgBr('SLEV') unless schema_name == SEPA::PAIN_001_001_03_CH_02
 
           transactions.each do |transaction|
-            build_transaction(builder, transaction)
+            build_transaction(builder, transaction, schema_name)
           end
         end
       end
     end
 
-    def build_transaction(builder, transaction)
+    def build_transaction(builder, transaction, schema_name)
       builder.CdtTrfTxInf do
         builder.PmtId do
           if transaction.instruction.present?
@@ -102,9 +102,17 @@ module SEPA
             builder.IBAN(transaction.iban)
           end
         end
-        if transaction.remittance_information
+        if transaction.remittance_information.present?
           builder.RmtInf do
             builder.Ustrd(transaction.remittance_information)
+          end
+        elsif schema_name == SEPA::PAIN_001_001_03_CH_02 && transaction.remittance_reference.present?
+          builder.RmtInf do
+            builder.Strd do
+              builder.CdtrRefInf do
+                builder.Ref(transaction.remittance_reference)
+              end
+            end
           end
         end
       end
