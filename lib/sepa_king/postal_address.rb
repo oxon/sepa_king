@@ -4,8 +4,8 @@ module SEPA
     include ActiveModel::Validations
     extend Converter
 
-    attr_accessor :country, :street_name, :postal_code, :town_name, :address_line_1, :address_line_2
-    convert :country, :street_name, :postal_code, :town_name, :address_line_1, :address_line_2, to: :text
+    attr_accessor :country, :street_name, :building_number, :postal_code, :town_name, :address_line_1, :address_line_2
+    convert :country, :street_name, :building_number, :postal_code, :town_name, :address_line_1, :address_line_2, to: :text
 
     def initialize(attributes = {})
       attributes.each do |name, value|

@@ -2,6 +2,8 @@
 
 module SEPA
   class DirectDebit < Message
+    include ::SEPA::Shared::PostalAddressBuilder
+
     self.account_class = CreditorAccount
     self.transaction_class = DirectDebitTransaction
     self.xml_main_tag = 'CstmrDrctDbtInitn'
@@ -178,15 +180,6 @@ module SEPA
           end
         end
       end
-    end
-
-    def build_postal_address(builder, postal_address)
-      builder.Ctry(postal_address.country) if postal_address.country.present?
-      builder.StrtNm(postal_address.street_name) if postal_address.street_name.present?
-      builder.PstCd(postal_address.postal_code) if postal_address.postal_code.present?
-      builder.TwnNm(postal_address.town_name) if postal_address.town_name.present?
-      builder.AdrLine(postal_address.address_line_1) if postal_address.address_line_1.present?
-      builder.AdrLine(postal_address.address_line_2) if postal_address.address_line_2.present?
     end
   end
 end

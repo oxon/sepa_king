@@ -2,6 +2,8 @@
 
 module SEPA
   class CreditTransfer < Message
+    include ::SEPA::Shared::PostalAddressBuilder
+
     self.account_class = DebtorAccount
     self.transaction_class = CreditTransferTransaction
     self.xml_main_tag = 'CstmrCdtTrfInitn'
@@ -96,6 +98,9 @@ module SEPA
         end
         builder.Cdtr do
           builder.Nm(transaction.name)
+          builder.PstlAdr do
+            build_postal_address(builder, transaction.postal_address)
+          end if transaction.postal_address.present?
         end
         builder.CdtrAcct do
           builder.Id do
