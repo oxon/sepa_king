@@ -89,15 +89,24 @@ module SEPA
         builder.Amt do
           builder.InstdAmt('%.2f' % transaction.amount, Ccy: transaction.currency)
         end
-        if transaction.bic.present?
+        if (transaction.bic.present? || transaction.iban.start_with?('CH') || transaction.iban.start_with?('LI')) || transaction.creditor_bank_name.present? || transaction.creditor_bank_postal_address.present?
           builder.CdtrAgt do
             builder.FinInstnId do
-              builder.BIC(transaction.bic)
+              if transaction.bic.present?
+                builder.BIC(transaction.bic)
+              else # IBAN in CH/LI includes proprietary BIC / IID member ID
+                builder.ClrSysMmbId do
+                  builder.ClrSysId do
+                    builder.Cd('CHBCC')
+                  end
+                  builder.MmbId(transaction.iban[4..8])
+                end
+              end
+              builder.Nm(transaction.creditor_bank_name) if transaction.creditor_bank_name.present?
+              builder.PstlAdr do
+                build_postal_address(builder, transaction.creditor_bank_postal_address)
+              end if transaction.creditor_bank_postal_address.present?
             end
-            builder.Nm(transaction.creditor_bank_name) if transaction.creditor_bank_name.present?
-            builder.PstlAdr do
-              build_postal_address(builder, transaction.creditor_bank_postal_address)
-            end if transaction.creditor_bank_postal_address.present?
           end
         end
         builder.Cdtr do
