@@ -89,14 +89,15 @@ module SEPA
         builder.Amt do
           builder.InstdAmt('%.2f' % transaction.amount, Ccy: transaction.currency)
         end
-        if transaction.bic.present? || transaction.creditor_bank_name.present? || transaction.creditor_bank_postal_address.present?
+        if transaction.bic.present?
           builder.CdtrAgt do
             builder.FinInstnId do
               builder.BIC(transaction.bic)
-            end if transaction.bic.present?
-            if transaction.creditor_bank_name.present? || transaction.creditor_bank_postal_address.present?
-              build_postal_address(builder, transaction.creditor_bank_postal_address)
             end
+            builder.Nm(transaction.creditor_bank_name) if transaction.creditor_bank_name.present?
+            builder.PstlAdr do
+              build_postal_address(builder, transaction.creditor_bank_postal_address)
+            end if transaction.creditor_bank_postal_address.present?
           end
         end
         builder.Cdtr do
