@@ -86,10 +86,10 @@ module SEPA
           end
           builder.EndToEndId(transaction.reference)
         end
-        if self.ch_local_instrument.present?
+        if transaction.ch_local_instrument.present?
           builder.PmtTpInf do
             builder.LclInstrm do
-              builder.Prtry(self.ch_local_instrument)
+              builder.Prtry(transaction.ch_local_instrument)
             end
           end
         end
