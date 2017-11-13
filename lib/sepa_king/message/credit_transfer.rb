@@ -49,13 +49,14 @@ module SEPA
               if schema_name == SEPA::PAIN_001_001_03_CH_02
                 if account.bic.present?
                   builder.BIC(account.bic)
-                end
-                builder.ClrSysMmbId do
-                  builder.ClrSysId do
-                    builder.Cd('CHBCC')
-                  end
-                  unless account.bic.present?
-                    builder.MmbId(account.clearing_number || '9000')
+                else
+                  builder.ClrSysMmbId do
+                    builder.ClrSysId do
+                      builder.Cd('CHBCC')
+                    end
+                    unless account.bic.present?
+                      builder.MmbId(account.clearing_number || '9000')
+                    end
                   end
                 end
               else
@@ -96,28 +97,28 @@ module SEPA
         builder.Amt do
           builder.InstdAmt('%.2f' % transaction.amount, Ccy: transaction.currency)
         end
-        if (transaction.bic.present? || transaction.iban.start_with?('CH') || transaction.iban.start_with?('LI')) || transaction.creditor_bank_name.present? || transaction.creditor_bank_postal_address.present?
+        if (transaction.bic.present? || transaction.iban.to_s.start_with?('CH') || transaction.iban.to_s.start_with?('LI')) || transaction.creditor_bank_name.present? || transaction.creditor_bank_postal_address.present?
           builder.CdtrAgt do
             builder.FinInstnId do
               if transaction.bic.present?
                 builder.BIC(transaction.bic)
               else
-                if transaction.ch_iid.present? || transaction.iban.present?
+                if (transaction.clearing_number.present? || transaction.iban.present?) && !(transaction.ch_bank_postal_account.present?)
                   # IBAN in CH/LI includes proprietary IID member ID
                   builder.ClrSysMmbId do
                     builder.ClrSysId do
                       builder.Cd('CHBCC')
                     end
-                    builder.MmbId(transaction.ch_iid || transaction.iban[4..8])
+                    builder.MmbId(transaction.clearing_number || transaction.iban[4..8])
                   end
                 end
               end
+              builder.Nm(transaction.creditor_bank_name) if transaction.creditor_bank_name.present?
               if transaction.ch_bank_postal_account.present?
                 builder.Othr do
                   builder.Id(transaction.ch_bank_postal_account)
                 end
               end
-              builder.Nm(transaction.creditor_bank_name) if transaction.creditor_bank_name.present?
               builder.PstlAdr do
                 build_postal_address(builder, transaction.creditor_bank_postal_address)
               end if transaction.creditor_bank_postal_address.present?
