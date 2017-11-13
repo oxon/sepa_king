@@ -6,7 +6,8 @@ module SEPA
 
     DEFAULT_REQUESTED_DATE = Date.new(1999, 1, 1).freeze
 
-    attr_accessor :name, :iban, :bic, :amount, :instruction, :reference, :remittance_information, :remittance_reference, :requested_date, :batch_booking, :currency, :postal_address, :creditor_bank_name, :creditor_bank_postal_address
+    attr_accessor :name, :iban, :bic, :amount, :instruction, :reference, :remittance_information, :remittance_reference, :requested_date, :batch_booking, :currency, :postal_address
+    attr_accessor :creditor_bank_name, :creditor_bank_postal_address
     convert :name, :instruction, :reference, :remittance_information, :currency, to: :text
     convert :amount, to: :decimal
 
@@ -18,7 +19,8 @@ module SEPA
     validates_numericality_of :amount, greater_than: 0
     validates_presence_of :requested_date
     validates_inclusion_of :batch_booking, :in => [true, false]
-    validates_with BICValidator, IBANValidator, message: "%{value} is invalid"
+    validates_with IBANValidator, message: "%{value} is invalid", unless: ->(transaction) { transaction.is_a?(CreditTransferTransaction) && !(['3', nil].include?(transaction.ch_payment_type)) }
+    validates_with BICValidator, message: "%{value} is invalid"
 
     def initialize(attributes = {})
       attributes.each do |name, value|
