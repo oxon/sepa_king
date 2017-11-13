@@ -18,7 +18,8 @@ module SEPA
     validates_numericality_of :amount, greater_than: 0
     validates_presence_of :requested_date
     validates_inclusion_of :batch_booking, :in => [true, false]
-    validates_with BICValidator, IBANValidator, message: "%{value} is invalid"
+    validates_with IBANValidator, message: "%{value} is invalid", unless: ->(transaction) { transaction.is_a?(CreditTransferTransaction) && !(transaction.ch_payment_type.in?(['3', nil])) }
+    validates_with BICValidator, message: "%{value} is invalid"
 
     def initialize(attributes = {})
       attributes.each do |name, value|
