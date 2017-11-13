@@ -5,7 +5,7 @@ module SEPA
     CH_PAYMENT_TYPES = %w(1 2.1 2.2 3)
 
     attr_accessor :service_level
-    attr_accessor :ch_payment_type, :ch_local_instrument, :ch_postal_account, :ch_bank_postal_account, :ch_bank_name, :ch_code_line, :ch_bank_account
+    attr_accessor :ch_payment_type, :ch_local_instrument, :ch_postal_account, :ch_isr_participation_number, :ch_bank_postal_account, :ch_code_line, :ch_bank_account, :ch_iid
     convert :ch_payment_type, to: :text
 
     validate { |t| t.validate_requested_date_after(Date.today) }
@@ -33,28 +33,28 @@ module SEPA
         when '1'
           valid_base &&
             self.ch_local_instrument == 'CH01' &&
-            self.iban.nil? && self.ch_postal_account.present? && self.reference.present? && self.bic.nil? &&
-            self.ch_bank_postal_account.nil? && self.ch_bank_name.nil? && self.ch_code_line.nil?
+            self.iban.nil? && self.ch_postal_account.nil? && self.ch_isr_participation_number.present? && self.reference.present? && self.bic.nil? &&
+            self.ch_bank_postal_account.nil? && self.creditor_bank_name.nil? && self.ch_code_line.nil?
         when '2.1'
           valid_base &&
             self.ch_local_instrument == 'CH02' &&
-            self.iban.nil? && self.ch_postal_account.present? && self.reference.nil? && self.bic.nil? &&
-            self.ch_bank_postal_account.nil? && self.ch_bank_name.nil? && self.ch_code_line.nil?
+            self.iban.nil? && self.ch_postal_account.present? && self.ch_isr_participation_number.nil? && self.reference.nil? && self.bic.nil? &&
+            self.ch_bank_postal_account.nil? && self.creditor_bank_name.nil? && self.ch_code_line.nil?
         when '2.2'
           IBANValidator.validate(self) if (self.iban.present? && self.ch_bank_account.nil? && self.ch_code_line.nil?)
-          valid_base && self.errors[:iban].empty? &&
+          valid_base && self.errors[:iban].empty? && self.ch_isr_participation_number.nil? &&
             self.ch_local_instrument == 'CH03' &&
             ((self.iban.present? && self.ch_bank_account.nil? && self.ch_code_line.nil?) ||
               (self.iban.nil? && self.ch_bank_account.present? && self.ch_code_line.nil?) ||
               (self.iban.nil? && self.ch_bank_account.nil? && self.ch_code_line.present?)) &&
-            ((self.ch_postal_account.nil? && self.bic.present? && self.ch_bank_postal_account.nil? && self.ch_bank_name.nil?) || # V1
-              (self.ch_postal_account.nil? && self.bic.present? && self.ch_bank_postal_account.present? && self.ch_bank_name.nil?) || # V2
-              (self.ch_postal_account.nil? && self.bic.nil? && self.ch_bank_postal_account.present? && self.ch_bank_name.present?)) # V3
+            ((self.ch_postal_account.nil? && self.ch_iid.present? && self.ch_bank_postal_account.nil? && self.creditor_bank_name.nil?) || # V1
+              (self.ch_postal_account.nil? && self.ch_iid.present? && self.ch_bank_postal_account.present? && self.creditor_bank_name.nil?) || # V2
+              (self.ch_postal_account.nil? && self.ch_iid.nil? && self.ch_bank_postal_account.present? && self.creditor_bank_name.present?)) # V3
         when '3', nil
           valid_base &&
             self.ch_local_instrument.nil? &&
             self.iban.present? && self.ch_postal_account.nil? && self.bic.nil? && # IBAN only
-            self.ch_bank_postal_account.nil? && self.ch_bank_name.nil? && self.ch_code_line.nil? # V3 only
+            self.ch_bank_postal_account.nil? && self.creditor_bank_name.nil? && self.ch_code_line.nil? # V3 only
         else
           raise 'not supported'
         end

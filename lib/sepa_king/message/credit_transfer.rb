@@ -86,6 +86,13 @@ module SEPA
           end
           builder.EndToEndId(transaction.reference)
         end
+        if self.ch_local_instrument.present?
+          builder.PmtTpInf do
+            builder.LclInstrm do
+              builder.Prtry(self.ch_local_instrument)
+            end
+          end
+        end
         builder.Amt do
           builder.InstdAmt('%.2f' % transaction.amount, Ccy: transaction.currency)
         end
@@ -94,12 +101,20 @@ module SEPA
             builder.FinInstnId do
               if transaction.bic.present?
                 builder.BIC(transaction.bic)
-              else # IBAN in CH/LI includes proprietary BIC / IID member ID
-                builder.ClrSysMmbId do
-                  builder.ClrSysId do
-                    builder.Cd('CHBCC')
+              else
+                if transaction.ch_iid.present? || transaction.iban.present?
+                  # IBAN in CH/LI includes proprietary IID member ID
+                  builder.ClrSysMmbId do
+                    builder.ClrSysId do
+                      builder.Cd('CHBCC')
+                    end
+                    builder.MmbId(transaction.ch_iid || transaction.iban[4..8])
                   end
-                  builder.MmbId(transaction.iban[4..8])
+                end
+              end
+              if transaction.ch_bank_postal_account.present?
+                builder.Othr do
+                  builder.Id(transaction.ch_bank_postal_account)
                 end
               end
               builder.Nm(transaction.creditor_bank_name) if transaction.creditor_bank_name.present?
@@ -116,8 +131,18 @@ module SEPA
           end if transaction.postal_address.present?
         end
         builder.CdtrAcct do
-          builder.Id do
-            builder.IBAN(transaction.iban)
+          if transaction.iban.present?
+            builder.Id do
+              builder.IBAN(transaction.iban)
+            end
+          elsif transaction.ch_postal_account.present? || transaction.ch_isr_participation_number.present? || transaction.ch_bank_account.present? || transaction.ch_code_line.present?
+            builder.Id do
+              builder.Othr do
+                builder.Id(transaction.ch_postal_account || transaction.ch_isr_participation_number || transaction.ch_bank_account || transaction.ch_code_line)
+              end
+            end
+          else
+            raise 'no account info present'
           end
         end
         if transaction.remittance_information.present?
