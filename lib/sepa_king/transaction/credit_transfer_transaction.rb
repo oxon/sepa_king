@@ -2,7 +2,7 @@
 module SEPA
   class CreditTransferTransaction < Transaction
     CH_LOCAL_INSTRUMENTS = %w(CH01 CH02 CH03)
-    CH_PAYMENT_TYPES = %w(1 2.1 2.2 3)
+    CH_PAYMENT_TYPES     = %w(1 2.1 2.2 3)
 
     attr_accessor :service_level
     attr_accessor :ch_payment_type, :ch_local_instrument, :ch_postal_account, :ch_isr_participation_number, :ch_bank_postal_account, :ch_code_line, :ch_bank_account, :clearing_number
@@ -27,7 +27,7 @@ module SEPA
         self.remittance_reference.nil? && self.currency == 'EUR' && %w(SEPA URGP).include?(self.service_level)
       when PAIN_001_001_03_CH_02
         self.service_level = nil # service_level is set by an initializer, where the schema is not known, but must be empty for all supported CH payment types
-        valid_base = (self.remittance_information.nil? || self.remittance_reference.nil?) && self.service_level.nil? && %w(EUR CHF).include?(self.currency)
+        valid_base         = (self.remittance_information.nil? || self.remittance_reference.nil?) && self.service_level.nil? && %w(EUR CHF).include?(self.currency)
         # see "Swiss Usage Guide" and "Swiss Implementation Guidelines" for pain.001 for details on payment types
         case self.ch_payment_type
         when '1'
@@ -52,8 +52,12 @@ module SEPA
         when '3', nil
           valid_base &&
             self.ch_local_instrument.nil? &&
-            self.iban.present? && self.ch_postal_account.nil? && # IBAN only
-            self.ch_bank_postal_account.nil? && self.creditor_bank_name.nil? && self.ch_code_line.nil? # V3 only
+            ((self.ch_bank_account.nil? && self.iban.present? && self.ch_postal_account.nil?) ||
+              (self.ch_bank_account.present? && self.iban.nil? && self.ch_postal_account.nil?) ||
+              (self.ch_bank_account.nil? && self.iban.nil? && self.ch_postal_account.present?)) &&
+            ((self.clearing_number.present? && self.bic.nil? && self.ch_bank_postal_account.nil? && self.creditor_bank_name.nil? && self.ch_code_line.nil?) || # V1
+              (self.clearing_number.nil? && self.bic.present? && self.ch_bank_postal_account.nil? && self.creditor_bank_name.nil? && self.ch_code_line.nil?) || # V2
+              (self.iban.present? && self.clearing_number.nil? && self.bic.nil? && self.ch_bank_postal_account.nil? && self.creditor_bank_name.nil? && self.ch_code_line.nil?)) # V3
         else
           raise 'not supported'
         end
