@@ -55,9 +55,9 @@ module SEPA
             ((self.ch_bank_account.nil? && self.iban.present? && self.ch_postal_account.nil?) ||
               (self.ch_bank_account.present? && self.iban.nil? && self.ch_postal_account.nil?) ||
               (self.ch_bank_account.nil? && self.iban.nil? && self.ch_postal_account.present?)) &&
-            ((self.clearing_number.present? && self.bic.nil? && self.ch_bank_postal_account.nil? && self.creditor_bank_name.nil? && self.ch_code_line.nil?) || # V1
-              (self.clearing_number.nil? && self.bic.present? && self.ch_bank_postal_account.nil? && self.creditor_bank_name.nil? && self.ch_code_line.nil?) || # V2
-              (self.iban.present? && self.clearing_number.nil? && self.bic.nil? && self.ch_bank_postal_account.nil? && self.creditor_bank_name.nil? && self.ch_code_line.nil?)) # V3
+            ((self.clearing_number.present? && self.bic.nil? && self.ch_bank_postal_account.nil? && self.ch_code_line.nil?) || # V1
+              (self.clearing_number.nil? && self.bic.present? && self.ch_bank_postal_account.nil? && self.ch_code_line.nil?) || # V2
+              (self.iban.present? && self.clearing_number.nil? && self.bic.nil? && self.ch_bank_postal_account.nil? && self.ch_code_line.nil?)) # V3
         else
           raise 'not supported'
         end
