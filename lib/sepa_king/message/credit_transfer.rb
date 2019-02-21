@@ -55,7 +55,11 @@ module SEPA
                       builder.Cd('CHBCC')
                     end
                     unless account.bic.present?
-                      builder.MmbId(account.clearing_number || '9000')
+                      member_id = account.clearing_number || '9000'
+                      if member_id.to_s =~ /\A\d+\Z/
+                        member_id = member_id.to_i.to_s
+                      end
+                      builder.MmbId(member_id)
                     end
                   end
                 end
@@ -109,7 +113,11 @@ module SEPA
                     builder.ClrSysId do
                       builder.Cd('CHBCC')
                     end
-                    builder.MmbId(transaction.clearing_number || transaction.iban[4..8])
+                    member_id = transaction.clearing_number || transaction.iban[4..8]
+                    if member_id.to_s =~ /\A\d+\Z/
+                      member_id = member_id.to_i.to_s
+                    end
+                    builder.MmbId(member_id)
                   end
                 end
               end
